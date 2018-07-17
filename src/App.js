@@ -28,7 +28,7 @@ const InstallPWA = styled.button`
 
 class App extends Component {
   state = {
-    prompt: true
+    prompt: false
   }
 
   componentDidMount() {

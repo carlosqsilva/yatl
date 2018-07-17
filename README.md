@@ -1,11 +1,12 @@
 # yet another todo list
 
-Demo: [here](https://carlosqsilva.github.io/yatl)
+Demo: [here](https://carlosqsilva.github.io/yatl/)
 
 ## Todo
 
-- [ ] Improve transition and animations
-- [ ] Write tests
+- [ ] remove mock content.
+- [ ] Improve transition and animations.
+- [ ] Write tests.
 
 # License
 
