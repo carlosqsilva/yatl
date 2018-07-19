@@ -4,6 +4,7 @@ import styled from "styled-components"
 
 const Wrapper = styled.div`
   border-bottom: 1px solid #999;
+  margin-bottom: 2rem;
   width: 100%;
 `
 
@@ -23,8 +24,11 @@ const NavItem = styled(NavLink)`
 
 export default () => (
   <Wrapper>
-    <NavItem to="/todos/active">Active</NavItem>
-    <NavItem to="/todos/done">Done</NavItem>
-    <NavItem to="/todos/archived">Archive</NavItem>
+    <NavItem exact to="/">
+      Active
+    </NavItem>
+    <NavItem exact to="/complete">
+      Complete
+    </NavItem>
   </Wrapper>
 )

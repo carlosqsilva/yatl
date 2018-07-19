@@ -10,5 +10,14 @@
 }
 .fade-exit-active {
   opacity: 0.01;
-  transition: opacity 800ms ease-in;
+  transition: opacity 500ms ease-in;
+}
+
+.slideRight-exit {
+  opacity: 1;
+}
+.slideRight-exit-active {
+  opacity: 0.01;
+  transform: translateX(90%);
+  transition: all 800ms ease-in;
 }

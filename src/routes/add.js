@@ -3,7 +3,7 @@ import styled from "styled-components"
 import { connect } from "react-redux"
 
 import { Text, CheckBox } from "../components/inputs"
-import { add_todo, update_todo } from "../store/actions"
+import { update_todo, create_todo } from "../store/actions"
 
 class Add extends Component {
   static defaultProps = {
@@ -58,7 +58,7 @@ class Add extends Component {
 
   onSubmit = e => {
     e.preventDefault()
-    const { updateTodo, addTodo, history } = this.props
+    const { updateTodo, createTodo, history } = this.props
     const { task, category } = this.state
 
     if (task && category) {
@@ -70,7 +70,7 @@ class Add extends Component {
         })
         history.goBack()
       } else {
-        addTodo({ task, category })
+        createTodo({ task, category })
       }
     }
   }
@@ -106,28 +106,21 @@ class Add extends Component {
 }
 
 const actions = {
-  addTodo: add_todo,
+  createTodo: create_todo,
   updateTodo: update_todo
 }
 
 const Wrapper = styled.div`
   transition: all 300ms ease;
-  background-color: transparent;
-  position: relative;
+  background-color: #212121;
+  overflow: hidden;
   min-height: 100vh;
   padding: 0 1rem;
-  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   display: flex;
   flex-direction: column;
-  z-index: 10;
-
-  ${props =>
-    props.show &&
-    `
-    background-color: #212121;
-    tranform: translateY(0);
-  `};
 `
 
 const Form = styled.form`

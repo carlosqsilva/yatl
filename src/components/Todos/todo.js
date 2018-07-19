@@ -1,6 +1,5 @@
 import React from "react"
 import styled from "styled-components"
-import { Link } from "react-router-dom"
 import edit from "./edit.svg"
 
 const Input = styled.input.attrs({
@@ -30,7 +29,6 @@ const Input = styled.input.attrs({
 const Text = styled.span`
   transition: all 200ms ease;
   padding: 0 1rem 0 4rem;
-  background: transparent;
   display: inline-block;
   position: relative;
   width: 100%;
@@ -44,9 +42,8 @@ const Text = styled.span`
     border: 2px solid #00c853;
     border-radius: 1rem;
     position: absolute;
-    /* display: block; */
-    height: 2rem;
-    width: 2rem;
+    height: 1.6rem;
+    width: 1.6rem;
     z-index: -1;
     top: 50%;
     left: 0;
@@ -54,19 +51,14 @@ const Text = styled.span`
 `
 
 const Label = styled.label`
-  align-items: center;
   position: relative;
-  font-size: 1.5rem;
-  display: flex;
+  font-size: 1.6rem;
   z-index: 1;
-
-  &:not(:last-child) {
-    margin-bottom: 1rem;
-  }
+  flex: 1;
 `
 
-const Edit = styled(Link)`
-  background: #eee;
+const Edit = styled.a`
+  /* background: #eee; */
   background-image: url(${edit});
   background-repeat: no-repeat;
   background-position: center;
@@ -79,17 +71,23 @@ const Edit = styled(Link)`
   right: 0;
   width: 2.4rem;
   height: 2.4rem;
+  z-index: 10;
 `
+const Wrapper = styled.div`
+  position: relative;
+  align-items: center;
+  display: flex;
 
-export const CheckBox = ({ todo, onChange }) => (
-  <Label>
-    <Input onChange={onChange} />
-    <Text>{todo.task}</Text>
-    <Edit
-      to={{
-        pathname: "/add",
-        state: { todo }
-      }}
-    />
-  </Label>
+  &:not(:last-child) {
+    margin-bottom: 1.1rem;
+  }
+`
+export const Todo = ({ todo, onChange, edit }) => (
+  <Wrapper>
+    <Label>
+      <Input onChange={onChange} />
+      <Text>{todo.task}</Text>
+    </Label>
+    <Edit onClick={edit} />
+  </Wrapper>
 )

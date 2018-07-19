@@ -1,66 +1,56 @@
-import React, { Component } from "react"
+import React from "react"
 import styled from "styled-components"
-import { connect } from "react-redux"
-import { BrowserRouter as Router, Route } from "react-router-dom"
+import { TransitionGroup, CSSTransition } from "react-transition-group"
+import { Route, withRouter } from "react-router-dom"
 
-import Todos from "./routes/todos"
-import Add from "./routes/add"
+import Author from "./components/author"
+import Navbar from "./components/navbar"
+import Todos from "./routes/home"
+import Complete from "./routes/complete"
+import AddTodo from "./components/AddTodo"
 
-const Wrapper = styled.div`
-  background-color: #fff;
-  position: relative;
-  min-height: 100vh;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-`
+const App = ({ location }) => {
+  const key = location.pathname.split("/")[1] || "/"
 
-const InstallPWA = styled.button`
-  all: unset;
-  display: ${props => (props.show ? "initial" : "none")};
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #fafafa;
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-`
-
-class App extends Component {
-  state = {
-    prompt: false
-  }
-
-  componentDidMount() {
-    this.deferPrompt = null
-    window.addEventListener("beforeinstallprompt", event => {
-      event.preventDefault()
-      this.deferPrompt = event
-      this.setState({ prompt: true })
-    })
-  }
-
-  install = () => {
-    this.deferPrompt.prompt()
-    this.deferPrompt.userChoice.then(() => {
-      this.setState({ prompt: false })
-      this.deferPrompt = null
-    })
-  }
-
-  render() {
-    return (
-      <Router basename={process.env.PUBLIC_URL}>
-        <Wrapper>
-          <Route path="/" component={Todos} />
-          <Route path="/add" component={Add} />
-          <InstallPWA onClick={this.install} show={this.state.prompt}>
-            Add to Homescreen
-          </InstallPWA>
-        </Wrapper>
-      </Router>
-    )
-  }
+  return (
+    <Wrapper>
+      <Container>
+        <AddTodo />
+        <Navbar />
+        <TransitionGroup component={null}>
+          <CSSTransition key={key} timeout={500} classNames="fade">
+            <React.Fragment>
+              <Route exact path="/" component={Todos} />
+              <Route path="/complete" component={Complete} />
+            </React.Fragment>
+          </CSSTransition>
+        </TransitionGroup>
+      </Container>
+      <Author />
+    </Wrapper>
+  )
 }
 
-export default connect(null)(App)
+const Wrapper = styled.div`
+  background: linear-gradient(to bottom, #757f9a, #d7dde8);
+  padding: 1rem 1rem 2rem 1rem;
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+`
+
+const Container = styled.div`
+  position: relative;
+  max-width: 720px;
+  width: 100%;
+  /* flex: 1; */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+`
+
+export default withRouter(App)

@@ -1,153 +1,76 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
-import { Redirect } from "react-router-dom"
-import styled from "styled-components"
-import { init_db, get_user, create_user } from "../store/actions"
 
-import background from "../assets/homebg.svg"
-import { Text } from "../components/inputs"
+import Loader from "../components/loader"
+import Todos from "../components/Todos"
+import { init, to_complete } from "../store/actions"
 
-class Home extends Component {
+class TodosContainer extends Component {
   state = {
-    text: "",
-    password: "",
-    login: false,
     redirect: false
   }
 
-  async componentDidMount() {
-    await init_db()
-    const user = await this.props.getUser()
-    if (user) {
-      this.setState({
-        redirect: true
-      })
-    } else {
-      this.setState({
-        login: true
-      })
-    }
+  componentDidMount() {
+    setTimeout(() => {
+      this.props.init()
+    }, 1000)
   }
 
-  onSubmit = e => {
-    e.preventDefault()
-
-    const { text, password } = this.state
-
-    if (text.length !== 0) {
-      this.props.createUser(text, password).then(() => {
-        this.setState({
-          redirect: true
-        })
-      })
-    }
-  }
-
-  onChange = ({ target: { type, value } }) => {
+  completed = () => {
     this.setState({
-      [type]: value
+      redirect: true
     })
   }
 
-  render() {
-    const { text, password, login, redirect } = this.state
+  renderTodos = () => {
+    const { category, tasks, toComplete } = this.props
+    return category.map(value => (
+      <Todos
+        key={value}
+        header={value}
+        todos={tasks[value]}
+        action={toComplete}
+      />
+    ))
+  }
 
-    if (redirect) {
-      return <Redirect to="/todos" />
+  render() {
+    const { loading } = this.props
+
+    if (loading) {
+      return <Loader />
     }
 
-    return (
-      <Wrapper>
-        <Login onSubmit={this.onSubmit} show={login}>
-          <Title>
-            <span>Welcome to</span>
-            <br />Yet another todo
-          </Title>
-
-          <Description>
-            Don't have an account yet?<br />A new one will be created for you
-            then ;)
-          </Description>
-
-          <Text
-            placeholder="Username"
-            onChange={this.onChange}
-            value={text}
-            required
-          />
-          <Text
-            placeholder="Password"
-            onChange={this.onChange}
-            value={password}
-            type="password"
-            required
-          />
-          <Submit onClick={this.onSubmit}>continue</Submit>
-        </Login>
-      </Wrapper>
-    )
+    return this.renderTodos()
   }
 }
 
-const Wrapper = styled.div`
-  background: #101010;
-  background-image: url(${background});
-  min-height: 100vh;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-`
+const state = ({ todos, loading }) => {
+  const tasks = todos.reduce((acc, todo) => {
+    let key = todo.category
+    if (acc[key]) {
+      acc[key].push(todo)
+    } else {
+      acc[key] = [todo]
+    }
+    return acc
+  }, {})
 
-const ShowLogin = () => `
-  transform: translateY(0);
-  opacity: 1;
-`
+  const category = Object.keys(tasks)
 
-const Login = styled.form`
-  transform: translateY(200px);
-  transition: all 600ms ease;
-  display: flex;
-  flex-direction: column;
-  margin: auto 20px;
-  max-width: 420px;
-  color: #fff;
-  opacity: 0;
-
-  ${props => props.show && ShowLogin};
-`
-
-const Title = styled.h1`
-  font-size: 2.1rem;
-  > span {
-    font-size: 1.4rem;
+  return {
+    tasks,
+    category,
+    loading
   }
-`
+}
 
-const Description = styled.p`
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #bdbdbd;
-  margin-bottom: 4rem;
-`
-
-const Submit = styled.button`
-  background-color: #29b6f6;
-  font-weight: 700;
-  cursor: pointer;
-  font-size: 20px;
-  padding: 15px;
-  border: none;
-  color: #fff;
-`
-
-const actions = {
-  getUser: get_user,
-  createUser: create_user
+const action = {
+  toComplete: to_complete,
+  init
 }
 
 export default connect(
-  null,
-  actions
-)(Home)
+  state,
+  action
+)(TodosContainer)
