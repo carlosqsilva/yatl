@@ -1,6 +1,6 @@
 # yet another todo list
 
-![screenhot](./screenshot.png)
+![screenhot](./screenshot.png | width=100)
 Demo: [here](https://carlosqsilva.github.io/yatl/)
 
 ## Todo
