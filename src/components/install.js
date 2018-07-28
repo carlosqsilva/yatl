@@ -21,6 +21,7 @@ class Install extends PureComponent {
       event.preventDefault()
       this.deferPrompt = event
       this.setState({ prompt: true })
+      return false
     })
   }
 

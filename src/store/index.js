@@ -87,6 +87,11 @@ export const stats = (
         active: state.active + 1,
         created: state.created + 1
       }
+    case types.REMOVE_TODO:
+      return {
+        ...state,
+        active: state.active - action.ids.length
+      }
     case types.UPDATE_STATS:
       console.log(action)
       return {

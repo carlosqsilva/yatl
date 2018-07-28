@@ -54,7 +54,7 @@ export const init = () => async dispatch => {
   }
 }
 
-export const delete_todo = (ids, store = "todos") => dispatch => {
+export const delete_todo = (ids, store = "todos") => (dispatch, getState) => {
   Promise.all([
     DB.delete(store, ids),
     dispatch({
@@ -62,7 +62,10 @@ export const delete_todo = (ids, store = "todos") => dispatch => {
       store,
       ids
     })
-  ])
+  ]).then(() => {
+    const { stats } = getState()
+    DB.update("stats", stats)
+  })
 }
 
 export const add_todo = (todos, store = "todos") => (dispatch, getState) => {
