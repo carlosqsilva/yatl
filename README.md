@@ -4,8 +4,10 @@ App created with React/Redux and Styled-Components, also uses IndexedDB to persi
 
 Demo: [here](https://carlosqsilva.github.io/yatl/)
 
-<img src="./screenshot1.png" width="100"/>
-<img src="./screenshot2.png" width="100"/>
+![screen 1](./screenshot1.png) ![screen 2](./screenshot2.png)
+
+<!-- <img src="./screenshot1.png" width="100"/>
+<img src="./screenshot2.png" width="100"/> -->
 
 ## Todo
 
