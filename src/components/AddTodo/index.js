@@ -11,25 +11,22 @@ class AddTodo extends Component {
     options: ["Studies", "Work", "Home", "Personal", "Other"]
   }
 
-  static getDerivedStateFromProps(nextProps, state) {
-    if (nextProps.id !== state.id) {
-      return {
-        id: nextProps.id,
-        task: nextProps.task,
-        category: nextProps.category
-      }
-    } else return null
-  }
-
   state = {
     id: "",
+    date: "",
     task: "",
     category: ""
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.id !== prevProps.id) {
+      this.setState({
+        ...this.props.todo
+      })
+    }
+  }
+
   textChange = event => {
-    this.textarea.style.height = ""
-    this.textarea.style.height = this.textarea.scrollHeight + "px"
     this.setState({
       task: event.target.value
     })
@@ -43,17 +40,18 @@ class AddTodo extends Component {
 
   submit = event => {
     event.preventDefault()
-    const { task, category, id } = this.state
+    const { task, category, id, date } = this.state
     const { updateTodo, createTodo } = this.props
 
-    if (task && category) {
-      if (id) updateTodo(this.state)
+    if (task) {
+      if (id) updateTodo({ id, date, task, category })
       else createTodo({ task, category })
 
       this.setState({
         task: "",
         category: "",
-        id: ""
+        id: "",
+        date: ""
       })
     }
   }
@@ -66,11 +64,9 @@ class AddTodo extends Component {
       <Wrapper>
         <Form onSubmit={this.submit}>
           <TextArea
-            rows={1}
             value={task}
-            innerRef={e => (this.textarea = e)}
             onChange={this.textChange}
-            placeholder="Add tasks here"
+            placeholder="What you need to do?"
           />
           <Submit onClick={this.submit} />
         </Form>
@@ -91,20 +87,17 @@ class AddTodo extends Component {
 }
 
 const Wrapper = styled.div`
-  background-color: #fff;
-  border-radius: 4px;
-  padding: 0.6rem 0.6rem 0 0.6rem;
   display: flex;
-  flex-direction: column;
   margin-bottom: 2rem;
+  flex-direction: column;
 `
 
 const Form = styled.form`
   position: relative;
-  display: block;
+  display: flex;
   background-color: #eee;
-  padding: 0.5rem 2rem 0.5rem 0.5rem;
-  border-radius: 20px;
+  padding: 0.3rem;
+  border-radius: 2px;
   margin-bottom: 1.4rem;
 `
 
@@ -113,25 +106,24 @@ const Container = styled.div`
   flex-wrap: wrap;
 `
 
-const TextArea = styled.textarea`
-  resize: none;
+const TextArea = styled.input.attrs({
+  type: "text"
+})`
+  all: unset;
+  flex: 1;
   outline: none;
   border: none;
-  width: 100%;
   overflow: hidden;
   background-color: transparent;
-  font-size: 1.6rem;
-  /* line-height: 2rem; */
+  font-size: 2rem;
 `
 
-const state = ({ todo }) => {
-  const id = todo.id || ""
-  const task = todo.task || ""
-  const category = todo.category || ""
+const state = ({ todos: { todo } }) => {
   return {
-    id,
-    task,
-    category
+    id: todo.id || "",
+    todo: {
+      ...todo
+    }
   }
 }
 

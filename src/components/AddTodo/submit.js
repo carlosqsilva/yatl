@@ -5,16 +5,12 @@ import { SVG } from "../common"
 export const Submit = styled.button`
   all: unset;
   background-color: #0d47a1;
-  transform: translateY(-50%);
-  position: absolute;
-  right: 3px;
-  top: 50%;
-  width: 3rem;
-  height: 3rem;
+  width: 3.4rem;
+  height: 3.4rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 50%;
+  border-radius: 2px;
   fill: #fff;
   text-align: center;
   cursor: pointer;

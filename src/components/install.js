@@ -1,18 +1,16 @@
-import React, { Component } from "react"
+import React, { PureComponent } from "react"
 import styled from "styled-components"
 
-const InstallPWA = styled.button`
+const InstallButton = styled.button`
   all: unset;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #fafafa;
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
+  background: #ffd602;
+  border-radius: 4px;
+  padding: 0 0.4rem;
+  cursor: pointer;
   display: ${props => (props.show ? "initial" : "none")};
 `
 
-class Install extends Component {
+class Install extends PureComponent {
   state = {
     prompt: false
   }
@@ -36,9 +34,9 @@ class Install extends Component {
 
   render() {
     return (
-      <InstallPWA onClick={this.install} show={this.state.prompt}>
+      <InstallButton onClick={this.install} show={this.state.prompt}>
         Add to Homescreen
-      </InstallPWA>
+      </InstallButton>
     )
   }
 }

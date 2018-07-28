@@ -1,39 +1,34 @@
 import React from "react"
 import styled from "styled-components"
-import { TransitionGroup, CSSTransition } from "react-transition-group"
-import { Route, withRouter } from "react-router-dom"
+import { Route } from "react-router-dom"
 
-import Author from "./components/author"
+import Install from "./components/install"
+import Footer from "./components/footer"
 import Navbar from "./components/navbar"
-import Todos from "./routes/home"
-import Complete from "./routes/complete"
 import AddTodo from "./components/AddTodo"
 
-const App = ({ location }) => {
-  const key = location.pathname.split("/")[1] || "/"
+import Home from "./routes/home"
+import Late from "./routes/late"
+import Complete from "./routes/complete"
 
-  return (
-    <Wrapper>
-      <Container>
-        <AddTodo />
-        <Navbar />
-        <TransitionGroup component={null}>
-          <CSSTransition key={key} timeout={500} classNames="fade">
-            <React.Fragment>
-              <Route exact path="/" component={Todos} />
-              <Route path="/complete" component={Complete} />
-            </React.Fragment>
-          </CSSTransition>
-        </TransitionGroup>
-      </Container>
-      <Author />
-    </Wrapper>
-  )
-}
+const App = () => (
+  <Wrapper>
+    <Container>
+      <AddTodo />
+      <Navbar />
+      <Route exact path="/" component={Home} />
+      <Route path="/late" component={Late} />
+      <Route path="/done" component={Complete} />
+    </Container>
+    <Footer>
+      <Install />
+    </Footer>
+  </Wrapper>
+)
 
 const Wrapper = styled.div`
-  background: linear-gradient(to bottom, #757f9a, #d7dde8);
-  padding: 1rem 1rem 2rem 1rem;
+  padding: 1rem 1rem 2rem;
+  /* background-color: #fff; */
   position: relative;
   display: flex;
   justify-content: flex-start;
@@ -45,12 +40,11 @@ const Wrapper = styled.div`
 const Container = styled.div`
   position: relative;
   max-width: 720px;
+  height: 100%;
   width: 100%;
-  /* flex: 1; */
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
 `
 
-export default withRouter(App)
+export default App

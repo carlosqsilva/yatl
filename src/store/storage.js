@@ -41,18 +41,7 @@ export default class Storage {
     })
   }
 
-  save = (store, obj) => {
-    return new Promise((Resolve, Reject) => {
-      const request = this.DB.transaction(store, "readwrite")
-        .objectStore(store)
-        .add(obj)
-
-      request.onsuccess = event => Resolve(event)
-      request.onerror = event => Reject(event)
-    })
-  }
-
-  delete = (store, ids) => {
+  save = (store, item) => {
     return new Promise((Resolve, Reject) => {
       const tx = this.DB.transaction(store, "readwrite"),
         objectStore = tx.objectStore(store)
@@ -60,7 +49,23 @@ export default class Storage {
       tx.oncomplete = event => Resolve(event)
       tx.onabort = event => Reject(event)
 
-      ids.forEach(id => {
+      if (Array.isArray(item)) {
+        item.forEach(item => {
+          objectStore.add(item)
+        })
+      } else objectStore.add(item)
+    })
+  }
+
+  delete = (store, key) => {
+    return new Promise((Resolve, Reject) => {
+      const tx = this.DB.transaction(store, "readwrite"),
+        objectStore = tx.objectStore(store)
+
+      tx.oncomplete = event => Resolve(event)
+      tx.onabort = event => Reject(event)
+
+      key.forEach(id => {
         objectStore.delete(id)
       })
     })

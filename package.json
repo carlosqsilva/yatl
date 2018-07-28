@@ -1,9 +1,14 @@
 {
   "name": "yatl",
   "version": "0.1.0",
-  "homepage": "https://carlosqsilva.github.io/yatl",
   "private": true,
+  "homepage": "https://carlosqsilva.github.io/yatl",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/carlosqsilva/yatl"
+  },
   "dependencies": {
+    "chartist": "^0.11.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-redux": "^5.0.7",
@@ -12,7 +17,8 @@
     "react-transition-group": "^2.4.0",
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0",
-    "styled-components": "^3.3.3"
+    "styled-components": "^3.3.3",
+    "why-did-you-update": "^0.1.1"
   },
   "scripts": {
     "start": "react-scripts start",

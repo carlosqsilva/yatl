@@ -18,10 +18,11 @@ const bounce = keyframes`
 
 const Spinner = styled.div`
   animation: ${spin} 2s linear infinite;
-  position: relative;
+  position: absolute;
+  top: 50%;
+  align-self: center;
   width: 45px;
   height: 45px;
-  margin: 0 auto;
 `
 
 const BubbleOne = styled.div`

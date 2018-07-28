@@ -1,58 +1,147 @@
 import React, { Component } from "react"
+import styled from "styled-components"
 import { Redirect } from "react-router-dom"
 import { connect } from "react-redux"
+import Chartist from "chartist"
 
-import Todos from "../components/Todos"
-import { delete_todo, to_todos } from "../store/actions"
+const options = {
+  axisX: {
+    showGrid: false
+  },
+  axisY: {
+    offset: 0,
+    showGrid: false,
+    showLabel: false
+  }
+}
+
+const options2 = {
+  height: "200px",
+  axisX: {
+    showLabel: false,
+    showGrid: false,
+    offset: 10
+  },
+  axisY: {
+    offset: 80,
+    showGrid: false
+  },
+  horizontalBars: true
+}
 
 class Complete extends Component {
-  state = {
-    checked: []
+  componentDidMount() {
+    if (!this.props.loading) {
+      this.renderChart()
+    }
   }
 
-  deleteTodos = () => {
-    this.props.deleteTodos(this.state.checked)
+  renderChart() {
+    const { weekDay, categorys } = this.props
+    const firstData = {
+      labels: Object.keys(weekDay),
+      series: [Object.values(weekDay)]
+    }
+
+    const secondData = {
+      labels: Object.keys(categorys),
+      series: [Object.values(categorys)]
+    }
+
+    new Chartist.Bar(this.firstChart, firstData, options)
+    new Chartist.Bar(this.secondChart, secondData, options2)
   }
 
   render() {
-    const { category, tasks, toTodos } = this.props
+    const { loading, active, completed, created } = this.props
 
-    if (this.props.loading) {
+    if (loading) {
       return <Redirect to="/" />
     }
 
-    return category.map(value => (
-      <Todos key={value} header={value} todos={tasks[value]} action={toTodos} />
-    ))
+    return (
+      <React.Fragment>
+        <Container>
+          <div>
+            {active}
+            <br />Active
+          </div>
+          <div>
+            {completed}
+            <br />Completed
+          </div>
+          <div>
+            {created}
+            <br />Created
+          </div>
+        </Container>
+        <Graph innerRef={e => (this.firstChart = e)}>
+          <Title>Completed by day</Title>
+        </Graph>
+        <Graph innerRef={e => (this.secondChart = e)}>
+          <Title>Completed by category</Title>
+        </Graph>
+      </React.Fragment>
+    )
   }
 }
 
-const state = ({ complete, loading }) => {
-  const tasks = complete.reduce((acc, todo) => {
-    let key = todo.category
-    if (acc[key]) {
-      acc[key].push(todo)
-    } else {
-      acc[key] = [todo]
-    }
-    return acc
-  }, {})
+const Container = styled.div`
+  display: flex;
+  justify-content: space-around;
+  background: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+  padding: 1rem;
+  font-size: 1.8rem;
+  color: #212121;
+  text-align: center;
+`
 
-  const category = Object.keys(tasks)
+const Title = styled.h1`
+  margin: 1rem 1rem 0;
+  font-size: 1.8rem;
+  color: #212121;
+`
 
+const Graph = styled.div`
+  margin-bottom: 2rem;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.9);
+
+  & svg .ct-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #212121;
+    text-align: center;
+  }
+
+  & svg .ct-label.ct-vertical {
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  & svg .ct-bar {
+    fill: none;
+    stroke: #8cc800;
+    stroke-width: 0.8rem;
+    stroke-linecap: round;
+  }
+`
+
+const state = ({
+  stats: { active, created, completed, categorys, weekDay },
+  todos: { loading }
+}) => {
   return {
-    tasks,
-    category,
-    loading
+    loading,
+    active,
+    created,
+    completed,
+    categorys,
+    weekDay
   }
 }
 
-const actions = {
-  deleteTodos: delete_todo,
-  toTodos: to_todos
-}
-
-export default connect(
-  state,
-  actions
-)(Complete)
+export default connect(state)(Complete)

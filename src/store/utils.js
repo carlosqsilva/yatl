@@ -11,35 +11,15 @@ export const id = (size = 10) => {
   return id
 }
 
-/**
- * @param {array} array of objects
- * @param {string} property to count
- * @param {object} Object to be used as accumulator
- * @returns Object
- */
-export const count = (array, property, accumulator = {}) => {
-  return array.reduce((acc, value) => {
-    let prop = value[property]
-    if (prop in acc) {
-      acc[prop]++
+export const splitArray = (array, property = "category") => {
+  let tasks = {}
+  array.forEach(obj => {
+    const key = obj[property]
+    if (key in tasks) {
+      tasks[key].push(obj)
     } else {
-      acc[prop] = 1
+      tasks[key] = [obj]
     }
-    return acc
-  }, accumulator)
-}
-
-export const remove = (obj, category, options) => {
-  const prop = obj[category]
-  if (prop in options) {
-    options[prop]--
-  }
-  return options
-}
-
-export const add = (category, options) => {
-  if (category in options) {
-    options[category]++
-  }
-  return options
+  })
+  return tasks
 }

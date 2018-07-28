@@ -1,25 +1,26 @@
 import * as types from "./types"
+import { combineReducers } from "redux"
 
 const initialState = {
   todo: {},
+  late: [],
   todos: [],
-  complete: [],
   loading: true
 }
 
-export default (state = initialState, action) => {
+const todos = (state = initialState, action) => {
   switch (action.type) {
     case types.INITIAL_LOAD:
       return {
         ...state,
         todos: action.todos,
-        complete: action.complete,
-        loading: action.loading
+        late: action.late,
+        loading: false
       }
     case types.ADD_TODO:
       return {
         ...state,
-        [action.store]: [...state[action.store], action.todo]
+        [action.store]: [].concat(action.todos, state[action.store])
       }
     case types.REMOVE_TODO:
       return {
@@ -48,3 +49,56 @@ export default (state = initialState, action) => {
       return state
   }
 }
+
+export const stats = (
+  state = {
+    name: "stats",
+    active: 0,
+    created: 0,
+    completed: 0,
+    categorys: {
+      Today: 0,
+      Studies: 0,
+      Work: 0,
+      Home: 0,
+      Personal: 0,
+      Other: 0
+    },
+    weekDay: {
+      sun: 0,
+      mon: 0,
+      tue: 0,
+      wed: 0,
+      thu: 0,
+      fri: 0,
+      sat: 0
+    }
+  },
+  action
+) => {
+  switch (action.type) {
+    case types.INITIAL_LOAD:
+      if (action.stats) {
+        return action.stats
+      } else return state
+    case types.ADD_TODO:
+      return {
+        ...state,
+        active: state.active + 1,
+        created: state.created + 1
+      }
+    case types.UPDATE_STATS:
+      console.log(action)
+      return {
+        ...state,
+        ...action.stats
+      }
+    default:
+      return state
+  }
+}
+
+export default combineReducers({
+  todos,
+  stats
+})

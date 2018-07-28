@@ -2,6 +2,8 @@ import * as types from "./types"
 import Storage from "./storage"
 import { id } from "./utils"
 
+const date = new Date()
+const today = date.toDateString()
 const DB = new Storage({
   name: "yatl",
   store: [
@@ -10,8 +12,12 @@ const DB = new Storage({
       key: "id"
     },
     {
-      name: "complete",
+      name: "late",
       key: "id"
+    },
+    {
+      name: "stats",
+      key: "name"
     }
   ]
 })
@@ -19,73 +25,82 @@ const DB = new Storage({
 export const init = () => async dispatch => {
   await DB.init()
 
-  const [todos, complete] = await Promise.all([
+  const [active, late, [stats]] = await Promise.all([
     DB.getAll("todos"),
-    DB.getAll("complete")
+    DB.getAll("late"),
+    DB.getAll("stats")
   ])
+
+  const todos = [],
+    newLates = [],
+    ids = []
+
+  active.forEach(todo => {
+    if (todo.category === "Today" && todo.date !== today) {
+      newLates.push(todo)
+      ids.push(todo.id)
+    } else todos.push(todo)
+  })
 
   dispatch({
     type: types.INITIAL_LOAD,
     todos: todos.reverse(),
-    complete: complete.reverse(),
-    loading: false
+    late: [...newLates, ...late].reverse(),
+    stats
   })
+
+  if (newLates.length !== 0) {
+    Promise.all([DB.save("late", newLates), DB.delete("todos", ids)])
+  }
 }
 
 export const delete_todo = (ids, store = "todos") => dispatch => {
-  DB.delete(store, ids).then(() => {
+  Promise.all([
+    DB.delete(store, ids),
     dispatch({
       type: types.REMOVE_TODO,
       store,
       ids
     })
-  })
+  ])
 }
 
-export const add_todo = (todo, store = "todos") => dispatch => {
-  DB.save(store, todo).then(() => {
+export const add_todo = (todos, store = "todos") => (dispatch, getState) => {
+  Promise.all([
+    DB.save(store, todos),
     dispatch({
       type: types.ADD_TODO,
       store,
-      todo
+      todos
     })
+  ]).then(() => {
+    const { stats } = getState()
+    DB.update("stats", stats)
   })
 }
 
 export const create_todo = values => dispatch => {
   const todo = {
     ...values,
-    id: id()
+    id: id(),
+    date: today
+  }
+
+  if (values.category === "") {
+    todo.category = "Today"
   }
 
   dispatch(add_todo(todo))
 }
 
 export const update_todo = (updated, store = "todos") => dispatch => {
-  DB.update(store, updated).then(() => {
+  Promise.all([
+    DB.update(store, updated),
     dispatch({
       type: types.UPDATE_TODO,
       updated,
       store
     })
-  })
-}
-
-export const to_complete = ids => (dispatch, getState) => {
-  const todo = getState().todos.find(task => task.id === ids[0])
-
-  Promise.all([
-    dispatch(add_todo(todo, "complete")),
-    dispatch(delete_todo(ids, "todos"))
-  ])
-}
-
-export const to_todos = ids => (dispatch, getState) => {
-  const todo = getState().complete.find(task => task.id === ids[0])
-
-  Promise.all([
-    dispatch(add_todo(todo, "todos")),
-    dispatch(delete_todo(ids, "complete"))
   ])
 }
 
@@ -94,4 +109,27 @@ export const edit_todo = todo => dispatch => {
     type: types.EDIT_TODO,
     todo
   })
+}
+
+export const to_complete = (ids, category, store) => (dispatch, getState) => {
+  const { stats } = getState()
+
+  const day = Reflect.ownKeys(stats.weekDay)[date.getDay()]
+  const total = ids.length
+
+  stats.active -= total
+  stats.completed += total
+  stats.weekDay[day] += total
+  if (category in stats.categorys) {
+    stats.categorys[category] += total
+  } else stats.categorys[category] = total
+
+  Promise.all([
+    DB.update("stats", stats),
+    dispatch(delete_todo(ids, store)),
+    dispatch({
+      type: types.UPDATE_STATS,
+      stats
+    })
+  ])
 }

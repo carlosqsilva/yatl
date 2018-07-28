@@ -3,34 +3,14 @@ import { connect } from "react-redux"
 
 import Loader from "../components/loader"
 import Todos from "../components/Todos"
-import { init, to_complete } from "../store/actions"
+import { splitArray } from "../store/utils"
 
 class TodosContainer extends Component {
-  state = {
-    redirect: false
-  }
-
-  componentDidMount() {
-    setTimeout(() => {
-      this.props.init()
-    }, 1000)
-  }
-
-  completed = () => {
-    this.setState({
-      redirect: true
-    })
-  }
-
   renderTodos = () => {
-    const { category, tasks, toComplete } = this.props
+    const { category, tasks } = this.props
+
     return category.map(value => (
-      <Todos
-        key={value}
-        header={value}
-        todos={tasks[value]}
-        action={toComplete}
-      />
+      <Todos key={value} header={value} todos={tasks[value]} DBStore="todos" />
     ))
   }
 
@@ -45,18 +25,9 @@ class TodosContainer extends Component {
   }
 }
 
-const state = ({ todos, loading }) => {
-  const tasks = todos.reduce((acc, todo) => {
-    let key = todo.category
-    if (acc[key]) {
-      acc[key].push(todo)
-    } else {
-      acc[key] = [todo]
-    }
-    return acc
-  }, {})
-
-  const category = Object.keys(tasks)
+const state = ({ todos: { todos, loading } }) => {
+  const tasks = splitArray(todos)
+  const category = Reflect.ownKeys(tasks)
 
   return {
     tasks,
@@ -65,12 +36,4 @@ const state = ({ todos, loading }) => {
   }
 }
 
-const action = {
-  toComplete: to_complete,
-  init
-}
-
-export default connect(
-  state,
-  action
-)(TodosContainer)
+export default connect(state)(TodosContainer)

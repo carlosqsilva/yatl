@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import edit from "./edit.svg"
+import { Edit } from "./buttons"
 
 const Input = styled.input.attrs({
   type: "checkbox"
@@ -13,24 +13,27 @@ const Input = styled.input.attrs({
   top: 0;
 
   &:checked ~ span::before {
-    border: none;
     background: linear-gradient(to right, #00c853, #fff);
-    padding-left: 0.2rem;
-    content: " ✔";
+    padding-left: 0.4rem;
+    content: "✔";
+    border: none;
     height: 100%;
     width: 100%;
   }
 
   &:checked ~ span {
-    padding-left: 2rem;
+    padding-left: 2.5rem;
   }
 `
 
 const Text = styled.span`
+  user-select: none;
   transition: all 200ms ease;
-  padding: 0 1rem 0 4rem;
-  display: inline-block;
+  padding-left: 4rem;
+  display: inline-flex;
+  align-items: center;
   position: relative;
+  height: 100%;
   width: 100%;
 
   &::before {
@@ -40,7 +43,7 @@ const Text = styled.span`
     transform: translateY(-50%);
     transition: all 200ms ease;
     border: 2px solid #00c853;
-    border-radius: 1rem;
+    border-radius: 0.3rem;
     position: absolute;
     height: 1.6rem;
     width: 1.6rem;
@@ -57,37 +60,18 @@ const Label = styled.label`
   flex: 1;
 `
 
-const Edit = styled.a`
-  /* background: #eee; */
-  background-image: url(${edit});
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 1.5rem;
-
-  transform: translateY(-50%);
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  right: 0;
-  width: 2.4rem;
-  height: 2.4rem;
-  z-index: 10;
-`
 const Wrapper = styled.div`
   position: relative;
-  align-items: center;
   display: flex;
-
-  &:not(:last-child) {
-    margin-bottom: 1.1rem;
-  }
+  height: 3rem;
 `
+
 export const Todo = ({ todo, onChange, edit }) => (
   <Wrapper>
     <Label>
       <Input onChange={onChange} />
       <Text>{todo.task}</Text>
     </Label>
-    <Edit onClick={edit} />
+    {edit && <Edit onClick={() => edit(todo)} />}
   </Wrapper>
 )
