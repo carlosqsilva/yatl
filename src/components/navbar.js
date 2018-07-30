@@ -13,6 +13,7 @@ const NavItem = styled(NavLink)`
   text-decoration: none;
   margin-bottom: -2px;
   font-size: 2rem;
+  outline: none;
   color: #fafafa;
   text-align: center;
   width: 7rem;

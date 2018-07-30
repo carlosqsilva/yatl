@@ -5,7 +5,9 @@ import { connect } from "react-redux"
 import Chartist from "chartist"
 
 const options = {
+  height: "200px",
   axisX: {
+    offset: 35,
     showGrid: false
   },
   axisY: {
@@ -110,7 +112,7 @@ const Graph = styled.div`
 
   & svg .ct-label {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     font-size: 1.1rem;
     color: #212121;

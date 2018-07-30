@@ -93,7 +93,6 @@ export const stats = (
         active: state.active - action.ids.length
       }
     case types.UPDATE_STATS:
-      console.log(action)
       return {
         ...state,
         ...action.stats
